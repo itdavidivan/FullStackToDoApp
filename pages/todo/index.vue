@@ -16,38 +16,38 @@
 
       <!-- Task List -->
       <ul class="todo-list">
-        <li
-          v-for="(task, index) in tasks"
-          :key="index"
-          :class="{ completed: task.completed }"
-        >
-          <input type="checkbox" v-model="task.completed" />
-          <span>{{ task.text }}</span>
-          <button @click="removeTask(index)" class="remove-btn">X</button>
+        <li v-for="(task, index) in tasks" :key="index">
+          <span>{{ task.description }}</span>
+          <!-- <button @click="removeTask(index)" class="remove-btn">X</button> -->
         </li>
       </ul>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import axios from "axios";
+import type { Todo } from "~/types";
 export default {
   data() {
     return {
       newTask: "",
-      tasks: [],
+      tasks: [] as Todo[],
     };
   },
   methods: {
-    addTask() {
-      if (this.newTask.trim() !== "") {
-        this.tasks.push({ text: this.newTask, completed: false });
-        this.newTask = ""; // Clear input field
-      }
+    async addTask() {
+      const response = await axios.post("/api/todos/todo", {
+        text: this.newTask,
+      });
+      this.tasks.push(response.data[0]);
+      this.newTask = "";
+      console.log(response.data);
     },
-    removeTask(index) {
-      this.tasks.splice(index, 1);
-    },
+
+    // removeTask(index ) {
+    //   this.tasks.splice(index, 1);
+    // },
   },
   mounted() {
     const token = localStorage.getItem("jwt");
