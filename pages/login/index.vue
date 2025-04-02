@@ -52,6 +52,7 @@ export default {
         const jwt = response.data;
         localStorage.setItem("jwt", jwt);
         console.log(response.data);
+        this.$router.push("/todo");
       } catch (error) {
         console.error(error);
       }
