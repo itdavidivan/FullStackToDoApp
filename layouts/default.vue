@@ -8,6 +8,10 @@
           <li><nuxt-link to="/login">Login</nuxt-link></li>
           <li><nuxt-link to="/register">Register</nuxt-link></li>
         </ul>
+        <!-- Logout button, only visible if the user is logged in -->
+        <button v-if="authStore.loggedIn" @click="logout" class="logout-btn">
+          Logout
+        </button>
       </nav>
     </header>
     <main>
@@ -16,8 +20,26 @@
   </div>
 </template>
 
-<script>
-export default {};
+<script lang="ts">
+import { defineComponent } from "vue";
+import { useAuthStore } from "@/stores/useAuthStore"; // Pinia store
+
+export default defineComponent({
+  computed: {
+    authStore() {
+      return useAuthStore(); // Vytvoríme instanciu Pinia store
+    },
+  },
+  methods: {
+    logout() {
+      this.authStore.logout(); // Zavoláme logout funkciu zo store
+      this.authStore.loggedIn = false;
+
+      // Po logoute presmerujeme na login stránku
+      this.$router.push("/login");
+    },
+  },
+});
 </script>
 
 <style scoped>
@@ -33,6 +55,7 @@ header {
   background-color: #333;
   padding: 10px 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative; /* Dôležité pre pozicovanie Logout button */
 }
 
 .navbar {
@@ -40,6 +63,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+  position: relative; /* Pre tlačidlo */
 }
 
 .navbar .logo {
@@ -52,6 +76,7 @@ header {
   list-style-type: none;
   display: flex;
   gap: 20px;
+  margin-right: 80px; /* Zabezpečí priestor pre Logout button */
 }
 
 .navbar .nav-links li {
@@ -75,5 +100,22 @@ main {
   padding: 20px;
   background-color: #f4f4f4;
   overflow-y: auto;
+}
+
+.logout-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  padding: 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
 }
 </style>

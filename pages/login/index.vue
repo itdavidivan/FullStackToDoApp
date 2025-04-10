@@ -34,8 +34,15 @@
 </template>
 
 <script lang="ts">
+import { useAuthStore } from "@/stores/useAuthStore"; // Pinia store
 import axios from "axios";
+
 export default {
+  computed: {
+    authStore() {
+      return useAuthStore(); // Vytvoríme instanciu Pinia store
+    },
+  },
   data() {
     return {
       email: "",
@@ -49,9 +56,13 @@ export default {
           email: this.email,
           password: this.password,
         });
-        const jwt = response.data;
-        localStorage.setItem("jwt", jwt);
+
+        const jwt = response.data; // Predpokladáme, že API vráti token
+        localStorage.setItem("jwt", jwt); // Uložíme token do localStorage
+        this.authStore.loggedIn = true;
         console.log(response.data);
+
+        // Presmerovanie po úspešnom prihlásení
         this.$router.push("/todo");
       } catch (error) {
         console.error(error);

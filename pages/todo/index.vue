@@ -39,21 +39,35 @@ export default {
     async addTask() {
       const response = await axios.post("/api/todos/todo", {
         text: this.newTask,
+        token: localStorage.getItem("jwt"),
       });
       this.tasks.push(response.data[0]);
       this.newTask = "";
       console.log(response.data);
+    },
+    async fetchData() {
+      try {
+        const response = await axios.get(
+          "/api/todos/todo?token=" + localStorage.getItem("jwt")
+        );
+
+        this.tasks = response.data;
+      } catch (error) {
+        console.error(error);
+      }
     },
 
     // removeTask(index ) {
     //   this.tasks.splice(index, 1);
     // },
   },
+
   mounted() {
     const token = localStorage.getItem("jwt");
     if (!token) {
       this.$router.push("/login");
     }
+    this.fetchData();
   },
 };
 </script>
